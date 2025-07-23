@@ -1,0 +1,7 @@
+name: cropwatch_rainview
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - dash
+  - dash-leaflet
