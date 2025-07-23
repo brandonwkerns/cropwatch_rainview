@@ -27,13 +27,28 @@ app.layout = html.Div([
     State("map", "clickData"),
 )
 def onclick(n_clicks, click_data):
-    print("Hello from display_click_coords!")
-    print(f"n_clicks: {n_clicks}, click_data: {click_data}")
     if not n_clicks is None:
         if n_clicks > 0:
             print(f"Detected click at: {click_data['latlng']}")
-            return f"Clicked at: Lat {click_data['latlng']['lat']:.4f}, Lng {click_data['latlng']['lng']:.4f}"
+            lat, lon = click_data['latlng']['lat'], click_data['latlng']['lng']
+            return f"Clicked at: Lat {lat:.4f}, Lng {lon:.4f}"
     return "Click on the map to get coordinates."
+
+
+@app.callback(
+    Output("map", "children"),
+    Input("map", "n_clicks"),
+    State("map", "clickData"),
+    State("map", "children"),
+)
+def add_marker(n_clicks, click_data, current_children):
+    if not n_clicks is None:
+        if n_clicks > 0:
+            lat, lon = click_data['latlng']['lat'], click_data['latlng']['lng']
+            marker = dl.Marker(position=[lat, lon])
+            current_children.append(marker)
+    return current_children
+
 
 if __name__ == '__main__':
     app.run(debug=True)
