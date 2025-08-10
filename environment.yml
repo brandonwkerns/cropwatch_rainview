@@ -6,4 +6,8 @@ dependencies:
   - dash
   - dash-leaflet
   - dash-extensions
+  - pystac-client
+  - rasterio
+  - numpy
+  - matplotlib
   
