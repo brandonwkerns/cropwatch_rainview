@@ -1,6 +1,9 @@
 # Dash stuff
 assets/dashExtensions_default.js
 
+# Ignore output images
+*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
