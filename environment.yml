@@ -5,3 +5,5 @@ dependencies:
   - python
   - dash
   - dash-leaflet
+  - dash-extensions
+  
