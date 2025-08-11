@@ -107,14 +107,16 @@ def map_click(n_clicks, click_data, current_children):
     if not n_clicks is None:
         if n_clicks > 0:
             lat, lon = click_data['latlng']['lat'], click_data['latlng']['lng']
-            # Longitude must be in [-180, 180].
+            # Marker longitude should stay in [0-360]
+            lon_marker = 1*lon
+            # Sentinel longitude must be in [-180, 180].
             if lon < 0.0:
                 lon += 360.0
             if lon > 180.0:
                 lon -= 360.0
 
             info = f"Selected location: {lat:.4f}, {lon:.4f}"
-            marker = dl.Marker(position=[lat, lon])
+            marker = dl.Marker(position=[lat, lon_marker])
             current_children = [marker]
 
             ndvi_array = fetch_ndvi(lat, lon, date="2025-07-01")
