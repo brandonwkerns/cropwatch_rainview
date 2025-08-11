@@ -2,6 +2,7 @@ import base64
 from io import BytesIO
 import numpy as np
 import rasterio
+from rasterio.windows import from_bounds
 from pystac_client import Client
 import matplotlib
 matplotlib.use("Agg")  # Use non-GUI backend for Dash/Flask threads
@@ -10,6 +11,7 @@ import dash
 from dash import html, Output, Input, State
 from dash_extensions.javascript import assign
 import dash_leaflet as dl
+from pyproj import Transformer
 
 #
 # Functions supporting the app
@@ -37,9 +39,14 @@ def fetch_ndvi(lat, lon, date="2025-07-01"):
 
     # 2. Open bands directly from S3 without downloading whole file
     with rasterio.open(red_href) as red:
-        red_data = red.read(1).astype(np.float32)
+        # Transformer from WGS84 to raster's CRS
+        transformer = Transformer.from_crs("EPSG:4326", red.crs, always_xy=True)
+        minx, miny = transformer.transform(lon - 0.05, lat - 0.05)
+        maxx, maxy = transformer.transform(lon + 0.05, lat + 0.05)
+        window = from_bounds(minx, miny, maxx, maxy, red.transform)
+        red_data = red.read(1, window=window).astype(np.float32)
     with rasterio.open(nir_href) as nir:
-        nir_data = nir.read(1).astype(np.float32)
+        nir_data = nir.read(1, window=window).astype(np.float32)
 
     # 3. Compute NDVI
     ndvi = (nir_data - red_data) / (nir_data + red_data)
