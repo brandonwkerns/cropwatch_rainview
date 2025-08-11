@@ -3,6 +3,8 @@ from io import BytesIO
 import numpy as np
 import rasterio
 from pystac_client import Client
+import matplotlib
+matplotlib.use("Agg")  # Use non-GUI backend for Dash/Flask threads
 import matplotlib.pyplot as plt
 import dash
 from dash import html, Output, Input, State
@@ -22,7 +24,7 @@ def fetch_ndvi(lat, lon, date="2025-07-01"):
         intersects={"type": "Point", "coordinates": [lon, lat]},
         datetime=f"{date}/2025-07-14",
         max_items=1,
-        query={"eo:cloud_cover": {"lt": 50}}
+        query={"eo:cloud_cover": {"lt": 99}}
     )
 
     items = list(search.items())
@@ -30,7 +32,6 @@ def fetch_ndvi(lat, lon, date="2025-07-01"):
         raise ValueError("No Sentinel-2 imagery found for this date/location.")
 
     item = items[-1]
-    # help(item.assets["red"])
     red_href = item.assets["red"].href
     nir_href = item.assets["nir"].href
 
@@ -103,12 +104,11 @@ def map_click(n_clicks, click_data, current_children):
             marker = dl.Marker(position=[lat, lon])
             current_children = [marker]
 
-            # ndvi_array = fetch_ndvi(lat, lon)
-            # if ndvi_array is None:
-            #     return info + " — No imagery found in time range.", [marker], None
-
-            # ndvi_base64 = ndvi_to_base64(ndvi_array)
-            # img_component = html.Img(src=ndvi_base64, style={"width": "400px", "border": "1px solid black"})
+            ndvi_array = fetch_ndvi(lat, lon, date="2025-07-01")
+            if ndvi_array is None:
+                return info + " — No imagery found in time range.", [marker], None
+            ndvi_base64 = ndvi_to_base64(ndvi_array)
+            img_component = html.Img(src=ndvi_base64, style={"width": "400px", "border": "1px solid black"})
 
     return info, current_children, img_component
 
