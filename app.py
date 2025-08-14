@@ -129,4 +129,7 @@ def map_click(n_clicks, click_data, current_children):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # For deployment
+    app.run(host="0.0.0.0", port=8050)
+    # For local development
+    # app.run(debug=True)
