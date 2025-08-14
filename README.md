@@ -42,4 +42,14 @@ chown -R ec2-user:ec2-user /home/ec2-user/miniconda3
 
 # Initialize conda for all shells (so ec2-user can use it)
 sudo -u ec2-user /home/ec2-user/miniconda3/bin/conda init --all
+
+# Clone the repository.
+git clone https://github.com/brandonwkerns/cropwatch_rainview.git
+cd cropwatch_rainview
+
+# Create the Conda environment.
+conda env create -y
+
+# Start the application
+nohup python app.py > /home/ec2-user/app.log 2>&1 &
 ```
