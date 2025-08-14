@@ -29,7 +29,6 @@ create the Python environment.)
 #!/bin/bash
 # Update and install prerequisites
 yum update -y
-yum upgrade -y
 yum install -y python3 git wget
 
 # Set up Miniconda
@@ -40,16 +39,15 @@ bash /home/ec2-user/miniconda3/miniconda.sh -b -u -p /home/ec2-user/miniconda3
 rm /home/ec2-user/miniconda3/miniconda.sh
 chown -R ec2-user:ec2-user /home/ec2-user/miniconda3
 
-# Initialize conda for all shells (so ec2-user can use it)
-sudo -u ec2-user /home/ec2-user/miniconda3/bin/conda init --all
+# Pre-accept Anaconda Terms of Service
+su - ec2-user -c "/home/ec2-user/miniconda3/bin/conda tos accept"
 
-# Clone the repository.
-git clone https://github.com/brandonwkerns/cropwatch_rainview.git
-cd cropwatch_rainview
+# Clone the repository
+su - ec2-user -c "git clone -b deploy-user-data https://github.com/brandonwkerns/cropwatch_rainview.git"
 
-# Create the Conda environment.
-conda env create -y
+# Create the Conda environment
+su - ec2-user -c "/home/ec2-user/miniconda3/bin/conda env create -y -f /home/ec2-user/cropwatch_rainview/environment.yml"
 
 # Start the application
-nohup python app.py > /home/ec2-user/app.log 2>&1 &
+su - ec2-user -c "nohup /home/ec2-user/miniconda3/envs/cropwatch_rainview/bin/python /home/ec2-user/cropwatch_rainview/app.py > /home/ec2-user/app.log 2>&1 &"
 ```
