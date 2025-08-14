@@ -43,7 +43,7 @@ chown -R ec2-user:ec2-user /home/ec2-user/miniconda3
 su - ec2-user -c "/home/ec2-user/miniconda3/bin/conda tos accept"
 
 # Clone the repository
-su - ec2-user -c "git clone -b deploy-user-data https://github.com/brandonwkerns/cropwatch_rainview.git"
+su - ec2-user -c "git clone https://github.com/brandonwkerns/cropwatch_rainview.git"
 
 # Create the Conda environment
 su - ec2-user -c "/home/ec2-user/miniconda3/bin/conda env create -y -f /home/ec2-user/cropwatch_rainview/environment.yml"
